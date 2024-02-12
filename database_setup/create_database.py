@@ -58,27 +58,5 @@ FOREIGN KEY(region) REFERENCES REGIONSTATE(region)
 cursor.execute(create_principaltbl)
 connection.commit()
 
-
-#Inserindo valores
-insert_values_into_regionstate_tbl = ''' INSERT INTO REGIONSTATE VALUES 
-("reno / tahoe"	,"ca"),
- ("stockton",	"ca"),
- ("gainesville",	"fl"),
- ("sarasota-bradenton","fl"),
- ("macon / warner robin",	"ga"),
- ("quad cities, IA/IL",	"il"),
- ("topeka",	"ks"),
- ("rochester",	"mn"),
- ("south jersey",	"nj"),
- ("knoxville",	"tn"),
- ("wichita falls",	"tx")
- ;'''
-
-cursor.execute(insert_values_into_regionstate_tbl)
-connection.commit() # sempre usar isso pq ele salva as alterações
-
-
-
-
 cursor.close()
 connection.close()
