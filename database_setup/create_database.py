@@ -13,9 +13,9 @@ def create_table(command):
     cursor.execute(command)
     connection.commit()
 
-
     cursor.close()
     connection.close()
+
 
 create_regionstatetbl = '''
 CREATE TABLE REGIONSTATE (
@@ -24,6 +24,7 @@ CREATE TABLE REGIONSTATE (
     PRIMARY KEY (region)
 );
 '''
+
 
 create_latlongregiontbl = '''
 CREATE TABLE LATLONGREGION(
@@ -34,6 +35,8 @@ PRIMARY KEY(latitude, longitude),
 FOREIGN KEY(region) REFERENCES REGIONSTATE(region)
 );
 '''
+
+
 create_principaltbl = '''
 CREATE TABLE PRINCIPAL(
 id BIGINT,
