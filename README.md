@@ -1,13 +1,13 @@
 # Configuração da aplicação
 
 1-Crie um ambiente virtual
-ˋpython -m venv envˋ
+python -m venv env
 
 2-Ative o ambiente virtual
-ˋ.\env\Scripts\activateˋ 
+.\env\Scripts\activate
 
 3-Instale as dependências
-ˋpip install -r 'requirements.txt'ˋ
+pip install -r 'requirements.txt'
 
 4-Instale o pymysql
-ˋpip install pymysqlˋ
+pip install pymysql
