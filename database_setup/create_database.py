@@ -50,18 +50,15 @@ comesFurnished INT,
 latitude DOUBLE SIGNED,
 longitude DOUBLE SIGNED,
 PRIMARY KEY(id),
-FOREIGN KEY(region) REFERENCES REGIONSTATE(region)
+FOREIGN KEY(region) REFERENCES REGIONSTATE(region),
+FOREIGN KEY(latitude,longitude) REFERENCES LATLONGREGION(latitude,longitude)
 ); 
+
 '''
 
-<<<<<<< HEAD
+
+referencial_integrity_fixer = '''ALTER table principal ADD FOREIGN KEY(latitude,longitude) REFERENCES LATLONGREGION(latitude,longitude);'''
+
 create_table(create_regionstatetbl)
 create_table(create_latlongregiontbl)
 create_table(create_principaltbl)
-=======
-cursor.execute(create_principaltbl)
-connection.commit()
-
-cursor.close()
-connection.close()
->>>>>>> 3e7ec274db6dbb3114784bd7684282b190dc8e6a
