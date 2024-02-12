@@ -1,15 +1,21 @@
 import pymysql
 
-connection = pymysql.connect(
-    host = "localhost",
-    user = "root",
-    password = "ferraz2013",
-    database = "housing"   #precisa criar o shcema no banco  
-)
 
-#Creating tables
+def create_table(command):
+    connection = pymysql.connect(
+        host = "localhost",
+        user = "root",
+        password = "ferraz2013",
+        database = "housing"
+    )
 
-cursor = connection.cursor()
+    cursor = connection.cursor()
+    cursor.execute(command)
+    connection.commit()
+
+
+    cursor.close()
+    connection.close()
 
 create_regionstatetbl = '''
 CREATE TABLE REGIONSTATE (
@@ -18,9 +24,6 @@ CREATE TABLE REGIONSTATE (
     PRIMARY KEY (region)
 );
 '''
-
-cursor.execute(create_regionstatetbl)
-connection.commit()
 
 create_latlongregiontbl = '''
 CREATE TABLE LATLONGREGION(
@@ -31,10 +34,6 @@ PRIMARY KEY(latitude, longitude),
 FOREIGN KEY(region) REFERENCES REGIONSTATE(region)
 );
 '''
-
-cursor.execute(create_latlongregiontbl)
-connection.commit()
-
 create_principaltbl = '''
 CREATE TABLE PRINCIPAL(
 id BIGINT,
@@ -55,30 +54,6 @@ FOREIGN KEY(region) REFERENCES REGIONSTATE(region)
 ); 
 '''
 
-cursor.execute(create_principaltbl)
-connection.commit()
-
-
-#Inserindo valores
-insert_values_into_regionstate_tbl = ''' INSERT INTO REGIONSTATE VALUES 
-("reno / tahoe"	,"ca"),
- ("stockton",	"ca"),
- ("gainesville",	"fl"),
- ("sarasota-bradenton","fl"),
- ("macon / warner robin",	"ga"),
- ("quad cities, IA/IL",	"il"),
- ("topeka",	"ks"),
- ("rochester",	"mn"),
- ("south jersey",	"nj"),
- ("knoxville",	"tn"),
- ("wichita falls",	"tx")
- ;'''
-
-cursor.execute(insert_values_into_regionstate_tbl)
-connection.commit() # sempre usar isso pq ele salva as alterações
-
-
-
-
-cursor.close()
-connection.close()
+create_table(create_regionstatetbl)
+create_table(create_latlongregiontbl)
+create_table(create_principaltbl)
