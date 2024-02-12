@@ -54,6 +54,14 @@ FOREIGN KEY(region) REFERENCES REGIONSTATE(region)
 ); 
 '''
 
+<<<<<<< HEAD
 create_table(create_regionstatetbl)
 create_table(create_latlongregiontbl)
 create_table(create_principaltbl)
+=======
+cursor.execute(create_principaltbl)
+connection.commit()
+
+cursor.close()
+connection.close()
+>>>>>>> 3e7ec274db6dbb3114784bd7684282b190dc8e6a
