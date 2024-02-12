@@ -57,8 +57,6 @@ FOREIGN KEY(latitude,longitude) REFERENCES LATLONGREGION(latitude,longitude)
 '''
 
 
-referencial_integrity_fixer = '''ALTER table principal ADD FOREIGN KEY(latitude,longitude) REFERENCES LATLONGREGION(latitude,longitude);'''
-
 create_table(create_regionstatetbl)
 create_table(create_latlongregiontbl)
 create_table(create_principaltbl)
