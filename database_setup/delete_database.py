@@ -1,3 +1,5 @@
+import pymysql
+
 def delete_database(command):
     connection = pymysql.connect(
         host = "localhost",
@@ -12,3 +14,5 @@ def delete_database(command):
 
     cursor.close()
     connection.close()
+
+delete_database(input(':'))
