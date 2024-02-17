@@ -1,17 +1,15 @@
 # Configuração da aplicação
+1-Faça um clone do repositório
+git clone https://github.com/heitorleonny/housing-crud.git
 
-1-Crie um ambiente virtual
-
+2-Crie um ambiente virtual
 python -m venv env
 
-2-Ative o ambiente virtual
-
+3-Ative o ambiente virtual
 .\env\Scripts\activate
 
-3-Instale as dependências
-
+4-Instale as dependências
 pip install -r 'requirements.txt'
 
-4-Instale o pymysql
-
+5-Instale o pymysql
 pip install pymysql
