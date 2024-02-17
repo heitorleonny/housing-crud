@@ -14,7 +14,9 @@ def create_add_menu():
     st.write("<h4>Novo imóvel</h4>", unsafe_allow_html=True)
     st.markdown(f'''Selecione as características desejadas''')
 
+    # Formato das infos: [estado/região, tipo de imóvel, tamanho, quantos quartos, quantos banheiros, Permite gatos, permite cachorros, Permite fumar?, acessível a cadeira de rodas, carregador para carros elétricos, vem mobiliado, latitude, longitude, preço ]
     new_apt = [None for _ in range(14)]
+
     housing_types = ["Apartamento", "Residência assistida", "Condomínio", "Cabine", "Duplex", "Flat", "Casa", "Anexo", "Terreno", "Loft","Manufaturado", "Casa de cidade" ]
     regions = ["reno / tahoe", "stockton" , "gainesville", "sarasota-bradenton", "macon / warner robin", "quad cities", "topeka", "rochester", "south jersey", "knoxville", "wichita"]
     col1, col2, col3 = st.columns([1,1,1])
@@ -32,6 +34,7 @@ def create_add_menu():
 
     with col3:
         new_apt[0] = st.selectbox(f"Qual a região/estado?", options= regions)
+        new_apt[13] = st.number_input(f"Qual o preço do imóvel?", value= 1256.74)
 
     col4, col5, col6 = st.columns([1,1,1])
 
