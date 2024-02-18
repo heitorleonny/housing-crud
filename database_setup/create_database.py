@@ -1,63 +1,61 @@
-import pymysql
+import mysql.connector
+from mysql.connector import Error
+import configparser
 
+def read_config():
+    config = configparser.ConfigParser()
+    config.read("config.cfg")
+    return config["mysql"]
 
-def create_table(command):
-    connection = pymysql.connect(
-        host = "localhost",
-        user = "root",
-        password = "ferraz2013",
-        database = "housing"
-    )
+def connect():
+    config = read_config()
+    try:
+        connection = mysql.connector.connect(
+            host=config["host"],
+            user=config["user"],
+            password=config["password"]
+        )
+        if connection.is_connected():
+            print("Conexão ao MySQL bem-sucedida.")
+            return connection
+    except Error as e:
+        print(f"Erro ao conectar ao MySQL: {e}")
+        return None
 
+def schema_exists(connection):
     cursor = connection.cursor()
-    cursor.execute(command)
-    connection.commit()
+    cursor.execute("SHOW DATABASES")
+    databases = cursor.fetchall()
+    for database in databases:
+        if 'housing' in database:
+            return True
+    return False
 
-    cursor.close()
-    connection.close()
+def create_schema(connection):
+    try:
+        with open("create_schema.sql", "r") as file:
+            sql_script = file.read()
+            cursor = connection.cursor()
+            cursor.execute(sql_script, multi=True)
+            connection.commit()
+            cursor.close()
+        print("Schema do banco de dados criado com sucesso.")
+    except Error as e:
+        print(f"Erro ao criar schema do banco de dados: {e}")
 
+def main(force_create=False):
+    connection = connect()
+    if connection:
+        if not schema_exists(connection) or force_create:
+            create_schema(connection)
+        else:
+            print("O esquema 'housing' já existe.")
+        connection.close()
+        print("Conexão ao MySQL fechada.")
 
-create_regionstatetbl = '''
-CREATE TABLE REGIONSTATE (
-    region VARCHAR(31),
-    state TEXT,
-    PRIMARY KEY (region)
-);
-'''
-
-
-create_latlongregiontbl = '''
-CREATE TABLE LATLONGREGION(
-latitude DOUBLE SIGNED ,
-longitude DOUBLE SIGNED ,
-region VARCHAR(31),
-PRIMARY KEY(latitude, longitude),
-FOREIGN KEY(region) REFERENCES REGIONSTATE(region)
-);
-'''
-
-
-create_principaltbl = '''
-CREATE TABLE PRINCIPAL(
-id BIGINT,
-region VARCHAR(31),
-price DOUBLE,
-houseType TEXT,
-sqFeet INT,
-beds INT,
-baths INT,
-catsAllowed INT,
-dogsAllowed INT,
-smokingAllowed INT,
-comesFurnished INT,
-latitude DOUBLE SIGNED,
-longitude DOUBLE SIGNED,
-PRIMARY KEY(id),
-FOREIGN KEY(region) REFERENCES REGIONSTATE(region),
-FOREIGN KEY(latitude,longitude) REFERENCES LATLONGREGION(latitude,longitude)
-); 
-'''
-
-create_table(create_regionstatetbl)
-create_table(create_latlongregiontbl)
-create_table(create_principaltbl)
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--force_create', action='store_true', help='Forçar a criação do esquema')
+    args = parser.parse_args()
+    main(args.force_create)
