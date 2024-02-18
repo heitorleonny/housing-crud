@@ -2,6 +2,7 @@ import streamlit as st
 from database_setup import register_adress
 from database_setup import create_property
 from database_setup import create_region
+import pymysql
 
 #Ainda precisa fazer:
 # Permitir atualização da pag de alguma forma (Talvez reescrevendo a pag?)
@@ -76,10 +77,15 @@ def create_add_menu():
     #Ainda precisa ser implementado:
 # Formato das infos: [estado/região, tipo de imóvel, tamanho, quantos quartos, quantos banheiros, Permite gatos, permite cachorros, Permite fumar?, acessível a cadeira de rodas, carregador para carros elétricos, vem mobiliado, latitude, longitude, preço ]
     if st.button("Adicionar novo apartamento"):
-        register_adress.register_adress(latitude = new_apt[11], longitude= new_apt[12], region=new_apt[0])
-        create_region.create_region(region= new_apt[0],state= new_apt[0] )
-        create_property.create_property(region = new_apt[0], price= new_apt[13], houseType= new_apt[1], sqfeet= new_apt[2], beds=new_apt[3], baths= new_apt[4], catsAllowed= new_apt[5], dogsAllowed = new_apt[6], smokingAllowed = new_apt[7], comesFurnished = new_apt[10], latitude = new_apt[11], longitude = new_apt[12])
         print(f" informações : {new_apt}")
+
+        try:
+            register_adress.register_adress(latitude = new_apt[11], longitude= new_apt[12], region=new_apt[0])
+            create_region.create_region(region= new_apt[0],state= new_apt[0] )
+            create_property.create_property(region = new_apt[0], price= new_apt[13], houseType= new_apt[1], sqfeet= new_apt[2], beds=new_apt[3], baths= new_apt[4], catsAllowed= new_apt[5], dogsAllowed = new_apt[6], smokingAllowed = new_apt[7], comesFurnished = new_apt[10], latitude = new_apt[11], longitude = new_apt[12])
+            print(f" informações : {new_apt}")
+        except pymysql.err.IntegrityError:
+            print("Erro de integridade")
 
 
     #Aqui para nova região/Estado:
@@ -97,8 +103,11 @@ def create_add_menu():
 
     if st.button("Adicionar nova região"):
         regions.append(f"{new_region[0]} ({new_region[1]})")
-        #create_region.create_region(region= new_region[0], state= new_region[1])
-        print(f" informações : {new_region}")
+        try:
+            create_region.create_region(region= new_region[0], state= new_region[1])
+            print(f" informações : {new_region}")
+        except pymysql.err.IntegrityError:
+            print("Erro de integridade")
 
 
 create_add_menu()

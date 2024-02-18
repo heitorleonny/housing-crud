@@ -17,5 +17,3 @@ def create_region(region,state):
 
     cursor.close()
     connection.close()
-
-create_region('Camaragibe', 'Pernambuco')
