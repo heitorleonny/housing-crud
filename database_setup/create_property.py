@@ -8,7 +8,7 @@ def create_property(region, price, houseType, sqfeet, beds, baths, catsAllowed, 
     connection = pymysql.connect(
         host="localhost",
         user="root",
-        password="pph1112003",
+        password="ferraz2013",
         database="housing"
     )
 

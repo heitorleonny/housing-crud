@@ -5,7 +5,7 @@ def create_table(command):
     connection = pymysql.connect(
         host = "localhost",
         user = "root",
-        password = "pph1112003",
+        password = "ferraz2013",
         database = "housing"
     )
 
@@ -56,9 +56,7 @@ PRIMARY KEY(id),
 FOREIGN KEY(region) REFERENCES REGIONSTATE(region),
 FOREIGN KEY(latitude,longitude) REFERENCES LATLONGREGION(latitude,longitude)
 ); 
-
 '''
-
 
 create_table(create_regionstatetbl)
 create_table(create_latlongregiontbl)

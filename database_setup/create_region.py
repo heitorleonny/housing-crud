@@ -20,16 +20,18 @@ def create_region(region, state):
                    VALUES ('{region}', '{state}')"""
         cursor.execute(sql)
         connection.commit()
-        print(f"Região '{region}' inserida com sucesso!")
+        #print(f"Região '{region}' inserida com sucesso")
 
     else:
-        print(f"Região '{region}' já existe!")
+        print()
+        #print(f"Região '{region}' já existe!")
 
     cursor.close()
     connection.close()
 
 
 # Exemplo de uso
-create_region("São Paulo", "SP")
-create_region("Rio de Janeiro", "RJ")
-create_region("São Paulo", "SP")  # Já existe, não será inserido
+create_region("Camaragibe", "PE")
+create_region("Santos", "São Paulo")
+create_region("Igarassu", "PE")
+

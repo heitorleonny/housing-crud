@@ -4,7 +4,7 @@ def populate_database(command):
     connection = pymysql.connect(
         host = "localhost",
         user = "root",
-        password = "pph1112003",
+        password = "ferraz2013",
         database = "housing"
     )
 
