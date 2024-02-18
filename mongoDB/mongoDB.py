@@ -1,4 +1,4 @@
-# Execute o comando docker abaixo para iniciar o container com o MongoDB.
+# Execute o comando docker para iniciar o MongoDB.
 # docker run --name mongo-container-2 vsgroot/rent-right-db
 
 
