@@ -12,10 +12,11 @@ def read_database(attributes,table,condition):
         database = "housing"
     )
     
-    sql = f""" SELECT {','.join(attributes)}
-    FROM {table}
-    WHERE {condition};
-    """
+    if condition is (None or ''):
+        sql = f"""SELECT {','.join(attributes)} FROM {table};"""
+    else:
+        sql = f"""SELECT {','.join(attributes)} FROM {table} WHERE {condition};"""
+
     cursor = connection.cursor()
     cursor.execute(sql)
 
@@ -29,4 +30,4 @@ def read_database(attributes,table,condition):
     return result
 
 attributes = takeAttributes('region', 'price' ,'houseType')
-read_database(attributes,'principal', 'price > 1000')
+read_database(attributes,'principal', '')

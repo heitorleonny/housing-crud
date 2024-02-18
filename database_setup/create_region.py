@@ -4,7 +4,7 @@ def create_region(region, state):
     connection = pymysql.connect(
         host="localhost",
         user="root",
-        password="ferraz2013",
+        password="pph1112003",
         database="housing",
     )
 
