@@ -8,7 +8,7 @@ def read_database(attributes,table,condition):
     connection = pymysql.connect(
         host = "localhost",
         user = "root",
-        password = "ferraz2013",
+        password = "pph1112003",
         database = "housing"
     )
     
@@ -26,6 +26,7 @@ def read_database(attributes,table,condition):
 
     cursor.close()
     connection.close()
+    return result
 
 attributes = takeAttributes('region', 'price' ,'houseType')
 read_database(attributes,'principal', 'price > 1000')

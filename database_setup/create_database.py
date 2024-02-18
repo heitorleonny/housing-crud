@@ -5,7 +5,7 @@ def create_table(command):
     connection = pymysql.connect(
         host = "localhost",
         user = "root",
-        password = "popopipiska",
+        password = "pph1112003",
         database = "housing"
     )
 

@@ -4,7 +4,7 @@ def delete_database(command):
     connection = pymysql.connect(
         host = "localhost",
         user = "root",
-        password = "popopipiska",
+        password = "pph1112003",
         database = "housing"
     )
 
