@@ -17,7 +17,7 @@ class MongoDBManager:
             container = client.containers.get('mongo-container-2')
             container_info = container.attrs
             networks = container_info['NetworkSettings']['Networks']
-            network_info = networks[list(networks.keys())[0]]  # Assuming only one network is used
+            network_info = networks[list(networks.keys())[0]] 
             container_ip = network_info['IPAddress']
             MongoDBManager._client = pymongo.MongoClient(host=container_ip, port=27017,
                                                         username='root', password='example',
