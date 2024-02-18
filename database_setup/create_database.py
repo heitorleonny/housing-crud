@@ -7,15 +7,6 @@ def read_config():
     config.read("config.cfg")
     return config["mysql"]
 
-<<<<<<< HEAD
-def create_table(command):
-    connection = pymysql.connect(
-        host = "localhost",
-        user = "root",
-        password = "pph1112003",
-        database = "housing"
-    )
-=======
 def connect():
     config = read_config()
     try:
@@ -30,7 +21,6 @@ def connect():
     except Error as e:
         print(f"Erro ao conectar ao MySQL: {e}")
         return None
->>>>>>> 5d10079c90a70c4137900cd3ee5ddf3391ed7bc5
 
 def schema_exists(connection):
     cursor = connection.cursor()
