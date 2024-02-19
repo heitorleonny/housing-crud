@@ -21,9 +21,7 @@ class HousingCRUD:
             self.cursor.execute("SELECT region_id FROM region_info WHERE region_name = %s", (region_name,))
             region = self.cursor.fetchone()
             if not region:
-                self.cursor.execute("INSERT INTO region_info (region_name) VALUES (%s)", (region_name,))
-                self.conn.commit()
-                region_id = self.cursor.lastrowid
+                raise ValueError("Região não encontrada na base de dados.")
             else:
                 region_id = region[0]
 
@@ -111,9 +109,7 @@ class HousingCRUD:
                     self.cursor.execute("SELECT region_id FROM region_info WHERE region_name = %s", (region_name,))
                     region = self.cursor.fetchone()
                     if not region:
-                        self.cursor.execute("INSERT INTO region_info (region_name) VALUES (%s)", (region_name,))
-                        self.conn.commit()
-                        region_id = self.cursor.lastrowid
+                        raise ValueError("Região não encontrada na base de dados.")
                     else:
                         region_id = region[0]
                     update_query += "region_id = %s, "
