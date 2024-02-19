@@ -5,12 +5,12 @@ class HousingCRUD:
     def __init__(self):
         config = configparser.ConfigParser()
         config.read("./database_setup/config.cfg")
-        params =  config["mysql"]
+        params = config["mysql"]
     
         self.conn = mysql.connector.connect(
-            host=config["host"],
-            user=config["user"],
-            password=config["password"],
+            host=params["host"],
+            user=params["user"],
+            password=params["password"],
             database='housing'
         )
         self.cursor = self.conn.cursor()
