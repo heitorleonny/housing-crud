@@ -1,80 +1,109 @@
 import streamlit as st
 import pandas as pd
-from database_setup import read_database
+from database_setup.housing_crud import HousingCRUD
+from database_setup.region_crud import RegionInfoCRUD
+from database_setup.type_crud import PropertyInfoCRUD
+from database_setup.laundry_crud import LaundryOptionsInfoCRUD
+from database_setup.parking_crud import ParkingOptionsInfoCRUD
+from database_setup.state_crud import StateInfoCRUD
 import pymysql
 
-atributes_apt= [ "id","region","price","houseType","sqFeet","beds","baths","catsAllowed","dogsAllowed","smokingAllowed","comesFurnished","latitude","longitude" ]
-atributes_latlong= [ "Latitude", "Longitude", "Region" ]
-atributes_Reg= [ "Region", "State" ]
+atributes_apt= [
+    'id',  
+    'price', 
+    'description', 
+    'latitude', 
+    'longitude', 
+    'region_id', 
+    'region_name', 
+    'state_id', 
+    'state_name', 
+    'state_abbreviation', 
+    'sqfeet', 
+    'beds', 
+    'baths', 
+    'type_id', 
+    'type_description', 
+    'laundry_option_id', 
+    'laundry_option_description', 
+    'parking_option_id', 
+    'parking_option_description', 
+    'combination_id', 
+    'cats_allowed', 
+    'dogs_allowed', 
+    'smoking_allowed', 
+    'wheelchair_access', 
+    'electric_vehicle_charge', 
+    'comes_furnished'
+]
 
-def join_args(args):
-    string = ""
+operations= [
+    "=", 
+    "!=", 
+    ">=", 
+    "<=", 
+    "LIKE", 
+]
 
-    for i in range(len(args)):
-        if i > 0 and args[i] != '':
-            string += " and "
-        string += args[i]
-    return string
-
-def show_results(args , results):
+def show_results(args , results, selected = atributes_apt):
     if len(args) == 0 or len(results) == 0:
         st.table(pd.DataFrame())  # Exibe uma tabela vazia
         print("Nenhum resultado encontrado.")
     else:
         df = pd.DataFrame(results, columns=args)
-        st.table(df)
+        st.table(df[selected])
 
 
-def Create_menu(table):
-    if table == "Imóveis":
-        table_atributes = atributes_apt
-    elif table == "Regiões":
-        table_atributes = atributes_Reg
-    elif table == "Estados":
-        table_atributes = atributes_latlong
+def Create_menu():
+    housing_crud = HousingCRUD()
 
-    selected_atributes = st.multiselect("Escolha os atributos a serem mostrados", options= table_atributes)
+    selected_atributes = st.multiselect("Escolha os atributos a serem mostrados", options=atributes_apt)
 
     conditions = []
     lista = st.session_state.get("lista", conditions)
-    col1 , col2, col3 = st.columns([1,1,4])
+    col1 , col2 = st.columns([1,2])
 
     with col1:
-        num_caixas_texto = st.selectbox("Selecione o número de argumentos", options=[1, 2, 3, 4, 5])
-        textos = []
+        num_caixas_texto = st.selectbox("Selecione o número de argumentos", options=range(1, len(atributes_apt) + 1))
+        args = {}
         for i in range(num_caixas_texto):
-            texto = st.text_input(f"Argumento {i+1}", f"")
-            textos.append(texto)
+            col11 , col12, col13 = st.columns([1,1,1])
+            with col11:
+                param = st.selectbox("Parâmetro", atributes_apt, index=0)
+            with col12:
+                op = st.selectbox("Operação", operations, index=0)
+            with col13:
+                value = st.text_input(f"Valor", f"")
+            args[param] = {'op': op, 'value': value}
     
-    args = textos
     results = []
     with col2:
-        if st.button("Gerar pesquisa"):
-            print(f"Pesquisando, argumentos: table_atributes = {selected_atributes}\n, argumentos = {join_args(args)}")
+        col21 , col22 = st.columns([1,1])
+        with col21:
+            if st.button("Gerar pesquisa"):
+                conditions = []
+                
+                for key, value in args.items():
+                    conditions.append(f"{key} {value['op']} {value['value']}")
+                
+                print(f"Pesquisando, argumentos: table_atributes = {selected_atributes}\n, argumentos = {' AND '.join(conditions)}")
 
-            try:
-                print(f"Pesquisando, argumentos: table_atributes = {selected_atributes}\n, argumentos = {join_args(args)}")
-
-                if len(selected_atributes) > 0:
-                    attributes = read_database.takeAttributes(*selected_atributes)
-                    results = (read_database.read_database(selected_atributes, selected_table, join_args(args)))
-                else:
-                    attributes = read_database.takeAttributes(*table_atributes)
-                    results = (read_database.read_database(attributes, selected_table, join_args(args)))
-                with col3:
-                    show_results(selected_atributes, results)
-            except pymysql.err.ProgrammingError:
-                st.write("Erro de consulta!")
-
-        if st.button("Mostrar toda a tabela"):
-            results = (read_database.read_database("*", selected_table, ''))
-            print(f"Pesquisando, argumentos: table_atributes = {table_atributes}\n, argumentos = {''}")
-            with col3:
-                show_results(table_atributes, results)
+                try:
+                    results = housing_crud.search_property(**args)
+                    with col2:
+                        show_results(atributes_apt, results, selected_atributes)  
+                except pymysql.err.ProgrammingError:
+                    st.write("Erro de consulta!")
+        with col22:
+            if st.button("Mostrar toda a tabela"):
+                results = housing_crud.search_all_properties()
+                    
+                print(f"Pesquisando, argumentos: table_atributes = {atributes_apt}\n, argumentos = {''}")
+                with col2:
+                    show_results(atributes_apt, results)       
 
 
 #Layout inicial
 st.write("<h2>Explorando o database<h2>", unsafe_allow_html=True)
 st.markdown(f'''Aqui você pode realizar pesquisas envolvento este banco de dados em uma tabela a sua escolha''')
-selected_table = st.selectbox("Qual o tipo de item que você quer pesquisar?", ("Imóveis", "Regiões", "Estados" ))
-Create_menu(selected_table)
+Create_menu()
