@@ -71,7 +71,7 @@ CREATE TABLE property_info (
     sqfeet INT,
     beds INT,
     baths INT,
-    FOREIGN KEY (id) REFERENCES listing_info(id),
+    FOREIGN KEY (id) REFERENCES listing_info(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (type_id) REFERENCES property_type_info(type_id)
 );
 
@@ -81,7 +81,7 @@ CREATE TABLE amenities_info (
     combination_id INT,
     laundry_option_id INT,
     parking_option_id INT,
-    FOREIGN KEY (id) REFERENCES listing_info(id),
+    FOREIGN KEY (id) REFERENCES listing_info(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (combination_id) REFERENCES amenity_combinations(combination_id),
     FOREIGN KEY (laundry_option_id) REFERENCES laundry_options_info(laundry_option_id),
     FOREIGN KEY (parking_option_id) REFERENCES parking_options_info(parking_option_id)
