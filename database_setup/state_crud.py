@@ -67,6 +67,3 @@ class StateInfoCRUD:
             print(f"Erro ao excluir estado: {err}")
             return False
 
-    def __del__(self):
-        self.cursor.close()
-        self.conn.close()
