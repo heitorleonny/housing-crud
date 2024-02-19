@@ -86,22 +86,23 @@ class HousingCRUD:
     
     def remove_property(self, property_id):
         try:
-            # Remover dados da tabela amenities_info
-            self.cursor.execute("DELETE FROM amenities_info WHERE id = %s", (property_id,))
             # Remover dados da tabela property_info
-            self.cursor.execute("DELETE FROM property_info WHERE id = %s", (property_id,))
-            # Remover dados da tabela listing_info
             self.cursor.execute("DELETE FROM listing_info WHERE id = %s", (property_id,))
+            self.cursor.execute("UPDATE listing_info SET id = id - 1 WHERE id > %s;", (property_id,))
             self.conn.commit()
-            print("Propriedade removida com sucesso.")
         except Exception as e:
             self.conn.rollback()
-            raise Exception(f"Erro ao remover propriedade: {str(e)}")
+            raise Exception(f"Erro ao remover propriedade: {str(e)}")              
+            
+        print("Propriedade removida com sucesso.")
+        
 
     def update_property(self, property_id, region_name=None, state_name=None, price=None, description=None, latitude=None, longitude=None, property_type=None, sqfeet=None, beds=None, baths=None, laundry_option=None, parking_option=None, cats_allowed=None, dogs_allowed=None, smoking_allowed=None, wheelchair_access=None, electric_vehicle_charge=None, comes_furnished=None):
         try:
-            # Iniciar transação
-            self.conn.start_transaction()
+            # Verificar se já existe uma transação em andamento
+            if not self.conn.in_transaction:
+                # Se não houver, iniciar uma nova transação
+                self.conn.start_transaction()
 
             # Atualizar dados da listagem
             if region_name or state_name or price is not None or description or latitude is not None or longitude is not None:
@@ -197,13 +198,29 @@ class HousingCRUD:
             self.conn.rollback()
             print("Erro ao atualizar propriedade:", str(e))
 
+
     def search_property(self, **kwargs):
         conditions = []
         values = []
 
         for key, value in kwargs.items():
-            conditions.append(f"{key} = %s")
-            values.append(value)
+            if key == 'id':
+                conditions.append(f"property_info.id {value['op']} %s")  
+            elif key == 'region_id':
+                conditions.append(f"region_info.region_id {value['op']} %s")
+            elif key == 'state_id':
+                conditions.append(f"state_info.state_id {value['op']} %s")
+            elif key == 'type_id':
+                conditions.append(f"property_type_info.type_id {value['op']} %s")
+            elif key == 'laundry_option_id':
+                conditions.append(f"laundry_options_info.laundry_option_id {value['op']} %s")
+            elif key == 'parking_option_id':
+                conditions.append(f"parking_options_info.parking_option_id {value['op']} %s")
+            elif key == 'combination_id':
+                conditions.append(f"amenity_combinations.combination_id {value['op']} %s")
+            else:
+                conditions.append(f"{key} {value['op']} %s")
+            values.append(value['value'])
 
         query = f"""
             SELECT *
@@ -213,8 +230,46 @@ class HousingCRUD:
             WHERE {' AND '.join(conditions)}
         """
         self.cursor.execute(query, values)
-        return self.cursor.fetchall()
+        results = self.cursor.fetchall()
+        ret = [[j for j in i] for i in results]
+
+        for i in range(len(ret)):
+            ret[i].pop(22)
+            ret[i].pop(21)
+            ret[i].pop(20)
+            ret[i].pop(19)
+            ret[i].pop(13)
+            ret[i].pop(12)
+            ret[i].pop(2)
+            ret[i].pop(1) 
+        return ret
+
+    def search_all_properties(self):
+        query = """
+            SELECT *
+            FROM listing_info INNER JOIN region_info ON listing_info.region_id = region_info.region_id INNER JOIN state_info ON listing_info.state_id = state_info.state_id
+            INNER JOIN property_info ON listing_info.id = property_info.id INNER JOIN property_type_info ON property_info.type_id = property_type_info.type_id
+            INNER JOIN amenities_info ON listing_info.id = amenities_info.id INNER JOIN laundry_options_info ON amenities_info.laundry_option_id = laundry_options_info.laundry_option_id  INNER JOIN parking_options_info ON amenities_info.parking_option_id = parking_options_info.parking_option_id INNER JOIN amenity_combinations ON amenities_info.combination_id = amenity_combinations.combination_id
+        """
+        self.cursor.execute(query)
+        results = self.cursor.fetchall()
+        ret = [[j for j in i] for i in results]
+
+        for i in range(len(ret)):
+            ret[i].pop(22)
+            ret[i].pop(21)
+            ret[i].pop(20)
+            ret[i].pop(19)
+            ret[i].pop(13)
+            ret[i].pop(12)
+            ret[i].pop(2)
+            ret[i].pop(1) 
+        return ret
 
     def __end__(self):
         self.cursor.close()
         self.conn.close()
+
+if __name__ == '__main__':
+    crud = HousingCRUD()
+    print(crud.search_property(combination_id={'op': '=', 'value': 1}))
