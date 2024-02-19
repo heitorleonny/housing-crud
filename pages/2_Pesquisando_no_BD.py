@@ -26,11 +26,11 @@ def show_results(args , results):
 
 
 def Create_menu(table):
-    if table == "PRINCIPAL":
+    if table == "Imóveis":
         table_atributes = atributes_apt
-    elif table == "REGIONSTATE":
+    elif table == "Regiões":
         table_atributes = atributes_Reg
-    elif table == "LATLONGREGION":
+    elif table == "Estados":
         table_atributes = atributes_latlong
 
     selected_atributes = st.multiselect("Escolha os atributos a serem mostrados", options= table_atributes)
@@ -76,6 +76,5 @@ def Create_menu(table):
 #Layout inicial
 st.write("<h2>Explorando o database<h2>", unsafe_allow_html=True)
 st.markdown(f'''Aqui você pode realizar pesquisas envolvento este banco de dados em uma tabela a sua escolha''')
-
-selected_table = st.selectbox("Qual tabela você quer pesquisar?", ("PRINCIPAL", "REGIONSTATE", "LATLONGREGION" ))
+selected_table = st.selectbox("Qual o tipo de item que você quer pesquisar?", ("Imóveis", "Regiões", "Estados" ))
 Create_menu(selected_table)
