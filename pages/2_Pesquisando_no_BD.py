@@ -69,11 +69,11 @@ def Create_menu():
         for i in range(num_caixas_texto):
             col11 , col12, col13 = st.columns([1,1,1])
             with col11:
-                param = st.selectbox("Parâmetro", atributes_apt, index=0)
+                param = st.selectbox(f"Parâmetro {i + 1}", atributes_apt, index=0)
             with col12:
-                op = st.selectbox("Operação", operations, index=0)
+                op = st.selectbox(f"Operação {i + 1}", operations, index=0)
             with col13:
-                value = st.text_input(f"Valor", f"")
+                value = st.text_input(f"Valor {i + 1}", f"")
             args[param] = {'op': op, 'value': value}
     
     results = []

@@ -18,7 +18,7 @@ def main():
 
     st.write("<h1>Banco de Dados Housing<h1>", unsafe_allow_html=True)
 
-    create_schema(force_create=True)
+    create_schema(force_create=False)
 
     st.markdown('''
     #### Bem vindo ao dashboard feito para visualização de manipulação do banco de dados Housing!
