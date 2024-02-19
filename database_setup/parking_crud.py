@@ -67,6 +67,3 @@ class ParkingOptionsInfoCRUD:
             print(f"Erro ao excluir opção de estacionamento: {err}")
             return False
 
-    def __del__(self):
-        self.cursor.close()
-        self.conn.close()
