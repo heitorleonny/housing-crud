@@ -41,13 +41,16 @@ class HousingCRUD:
 
             # Obter o id do tipo de propriedade
             self.cursor.execute("SELECT type_id FROM property_type_info WHERE type_description = %s", (property_type,))
-            property_type_id = self.cursor.fetchone()[0]
+            property_type_id = self.cursor.fetchone()
+            
+            if not property_type_id:
+                raise ValueError("Tipo não encontrado na base de dados.")
 
             # Inserir dados específicos da propriedade
             self.cursor.execute("""
                 INSERT INTO property_info (id, type_id, sqfeet, beds, baths)
                 VALUES (%s, %s, %s, %s, %s)
-            """, (listing_id, property_type_id, sqfeet, beds, baths))
+            """, (listing_id, property_type_id[0], sqfeet, beds, baths))
             self.conn.commit()
 
             # Obter o id da opção de lavanderia
@@ -212,6 +215,6 @@ class HousingCRUD:
         self.cursor.execute(query, values)
         return self.cursor.fetchall()
 
-    def close_connection(self):
+    def __end__(self):
         self.cursor.close()
         self.conn.close()
