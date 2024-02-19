@@ -4,7 +4,7 @@ import configparser
 class HousingCRUD:
     def __init__(self):
         config = configparser.ConfigParser()
-        config.read("config.cfg")
+        config.read("./database_setup/config.cfg")
         params =  config["mysql"]
     
         self.conn = mysql.connector.connect(

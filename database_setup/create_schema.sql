@@ -9,42 +9,6 @@ use housing;
 
 -- Criando as tabelas
 
--- Tabela para informações de listagem
-CREATE TABLE listing_info (
-    id INT PRIMARY KEY,
-    region_id INT,
-    state_id INT,
-    price DECIMAL,
-    description TEXT,
-    latitude DECIMAL,
-    longitude DECIMAL,
-    FOREIGN KEY (region_id) REFERENCES region_info(region_id),
-    FOREIGN KEY (state_id) REFERENCES state_info(state_id)
-);
-
--- Tabela para informações da propriedade
-CREATE TABLE property_info (
-    id INT PRIMARY KEY,
-    type_id INT,
-    sqfeet INT,
-    beds INT,
-    baths INT,
-    FOREIGN KEY (id) REFERENCES listing_info(id),
-    FOREIGN KEY (type_id) REFERENCES property_type_info(type_id)
-);
-
--- Tabela para informações de amenidades
-CREATE TABLE amenities_info (
-    id INT PRIMARY KEY,
-    combination_id INT,
-    laundry_option_id INT,
-    parking_option_id INT,
-    FOREIGN KEY (id) REFERENCES listing_info(id),
-    FOREIGN KEY (combination_id) REFERENCES amenity_combinations(combination_id),
-    FOREIGN KEY (laundry_option_id) REFERENCES laundry_options_info(laundry_option_id),
-    FOREIGN KEY (parking_option_id) REFERENCES parking_options_info(parking_option_id)
-);
-
 -- Tabela para tipos de propriedade
 CREATE TABLE property_type_info (
     type_id INT PRIMARY KEY,
@@ -83,8 +47,44 @@ CREATE TABLE region_info (
 -- Tabela para informações de estado
 CREATE TABLE state_info (
     state_id INT PRIMARY KEY,
-    state_name VARCHAR(255)
+    state_name VARCHAR(255),
     state_abbreviation CHAR(2)
+);
+
+-- Tabela para informações de listagem
+CREATE TABLE listing_info (
+    id INT PRIMARY KEY,
+    region_id INT,
+    state_id INT,
+    price DECIMAL,
+    description TEXT,
+    latitude DECIMAL,
+    longitude DECIMAL,
+    FOREIGN KEY (region_id) REFERENCES region_info(region_id),
+    FOREIGN KEY (state_id) REFERENCES state_info(state_id)
+);
+
+-- Tabela para informações da propriedade
+CREATE TABLE property_info (
+    id INT PRIMARY KEY,
+    type_id INT,
+    sqfeet INT,
+    beds INT,
+    baths INT,
+    FOREIGN KEY (id) REFERENCES listing_info(id),
+    FOREIGN KEY (type_id) REFERENCES property_type_info(type_id)
+);
+
+-- Tabela para informações de amenidades
+CREATE TABLE amenities_info (
+    id INT PRIMARY KEY,
+    combination_id INT,
+    laundry_option_id INT,
+    parking_option_id INT,
+    FOREIGN KEY (id) REFERENCES listing_info(id),
+    FOREIGN KEY (combination_id) REFERENCES amenity_combinations(combination_id),
+    FOREIGN KEY (laundry_option_id) REFERENCES laundry_options_info(laundry_option_id),
+    FOREIGN KEY (parking_option_id) REFERENCES parking_options_info(parking_option_id)
 );
 
 -- Precisa adicionar latitude e longitude como chaves estrangeiras para manter a integridade relacional
@@ -97,7 +97,7 @@ INSERT INTO region_info (region_id, region_name)
 VALUES (1,	'reno / tahoe');
 
 -- Inserir estados
-INSERT INTO state_info (state_id, state_name)
+INSERT INTO state_info (state_id, state_name, state_abbreviation)
 VALUES (1,	'alabama',	'al'),
        (2,	'alaska',	'ak'),
        (3,	'arizona',	'az'),
@@ -154,7 +154,7 @@ VALUES (1,	'alabama',	'al'),
 -- Inserir tipos de propriedade
 INSERT INTO property_type_info (type_id, type_description)
 VALUES (1,	'apartment'),
-       (2,	'condo');
+       (2,	'condo'),
        (3,	'house'),
        (4,	'duplex'),
        (5,	'townhouse'),
@@ -164,7 +164,7 @@ VALUES (1,	'apartment'),
        (9,	'flat'),
        (10,	'in-law'),
        (11,	'land'),
-       (12,	'assisted living'),
+       (12,	'assisted living');
 
 -- Inserir opções de lavanderia
 INSERT INTO laundry_options_info (laundry_option_id, laundry_option_description)
@@ -253,57 +253,37 @@ VALUES (1,	0,	0,	0,	0,	0,	0),
 
 -- Inserir dados das listagens
 INSERT INTO listing_info (id, region_id, state_id, price, description, latitude, longitude)
-VALUES (7049044568,	1,	5,	1148,	'Ridgeview by Vintage is where you will find all of your apartment living needs at a price you can afford! ...',	39.5483,	-119.796),
-       (7049047186,	1,	5,	1200,	'Conveniently located in the middle town of Reno. Close to Highway, 10 mins to UNR, shopping and restaurants...',	39.5026,	-119.789),
-       (7043634882,	1,	5,	1813,	'2BD | 2BA | 1683SQFT Discover exceptional service and well-designed spacious floor plans at Caviata apartment homes in Sparks, Nevada...',	39.6269,	-119.708),
-       (7049045324,	1,	5,	1095,	'MOVE IN SPECIAL FREE WASHER/DRYER WITH 6 OR 12 MONTH LEASE! *Ask about our preferred employer program for extra discounts!...',	39.4477,	-119.771),
-       (7049043759,	1,	5,	289,	'Move In Today: Reno Low-Cost, Clean & Furnished Apartments close to Restaurants, Cafes, Parks, and More! Call Us! Move In Today!...',	39.5357,	-119.805),
-       (7046327064,	1,	5,	1093,	'1BD | 1BA | 720SQFT In addition to attractive, comfortable apartments, Village at Iron Blossom combines all that Reno has to offer...',	39.4572,	-119.776),
-       (7049020738,	1,	5,	935,	'Tucked away in a park-like setting on the edge of midtown, located just minutes from shopping, restaurants...',	39.5118,	-119.802),
-       (7049041899,	1,	5,	1095,	'MOVE IN SPECIAL FREE WASHER/DRYER WITH 6 OR 12 MONTH LEASE! *Ask about our preferred employer program for extra discounts!...',	39.4477,	-119.771),
-       (7049041451,	1,	5,	1525,	'BRAND NEW APARTMENT HOMES, NOW OPEN! **GET 1 MONTH FREE AND WAIVED APPLICATION AND ADMIN FEES!! **O.A.C when you sign a 12-month lease**...',	39.6185,	-119.672),
-       (7049041434,	1,	5,	1295,	'6850 Sharlands Ave E-1021 Reno NV 89523 Property Address 6850 Sharlands Avenue E-1021 | Reno, NV 89523 Available: 02/07/2020 Offered By Dickson Realty, Inc...',	39.5193,	-119.897);
+VALUES (1,	1,	5,	1148,	'Ridgeview by Vintage is where you will find all of your apartment living needs at a price you can afford! ...',	39.5483,	-119.796),
+       (2,	1,	5,	1200,	'Conveniently located in the middle town of Reno. Close to Highway, 10 mins to UNR, shopping and restaurants...',	39.5026,	-119.789),
+       (3,	1,	5,	1813,	'2BD | 2BA | 1683SQFT Discover exceptional service and well-designed spacious floor plans at Caviata apartment homes in Sparks, Nevada...',	39.6269,	-119.708),
+       (4,	1,	5,	1095,	'MOVE IN SPECIAL FREE WASHER/DRYER WITH 6 OR 12 MONTH LEASE! *Ask about our preferred employer program for extra discounts!...',	39.4477,	-119.771),
+       (5,	1,	5,	289,	'Move In Today: Reno Low-Cost, Clean & Furnished Apartments close to Restaurants, Cafes, Parks, and More! Call Us! Move In Today!...',	39.5357,	-119.805),
+       (6,	1,	5,	1093,	'1BD | 1BA | 720SQFT In addition to attractive, comfortable apartments, Village at Iron Blossom combines all that Reno has to offer...',	39.4572,	-119.776),
+       (7,	1,	5,	935,	'Tucked away in a park-like setting on the edge of midtown, located just minutes from shopping, restaurants...',	39.5118,	-119.802),
+       (8,	1,	5,	1095,	'MOVE IN SPECIAL FREE WASHER/DRYER WITH 6 OR 12 MONTH LEASE! *Ask about our preferred employer program for extra discounts!...',	39.4477,	-119.771),
+       (9,	1,	5,	1525,	'BRAND NEW APARTMENT HOMES, NOW OPEN! **GET 1 MONTH FREE AND WAIVED APPLICATION AND ADMIN FEES!! **O.A.C when you sign a 12-month lease**...',	39.6185,	-119.672),
+       (10,	1,	5,	1295,	'6850 Sharlands Ave E-1021 Reno NV 89523 Property Address 6850 Sharlands Avenue E-1021 | Reno, NV 89523 Available: 02/07/2020 Offered By Dickson Realty, Inc...',	39.5193,	-119.897);
 
--- Criando o Trigger
-CREATE TRIGGER insert_listing_info_trigger
-AFTER INSERT ON listing_info
-FOR EACH ROW
-BEGIN
-    -- Verificar se o estado da listagem está na tabela state_info
-    IF NOT EXISTS (SELECT 1 FROM state_info WHERE state_id = NEW.state_id) THEN
-        -- Se não existir, lançar um erro
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'O estado da listagem não está na tabela state_info';
-    END IF;
+INSERT INTO property_info (id, type_id, sqfeet, beds, baths)
+VALUES (1,	1,	1078,	3,	2),
+       (2,	2,	1001,	2,	2),
+       (3,	1,	1683,	2,	2),
+       (4,	1,	708,	1,	1),
+       (5,	1,	250,	0,	1),
+       (6,	1,	720,	2,	2),
+       (7,	1,	661,	1,	1),
+       (8,	1,	708,	1,	1),
+       (9,	1,	1053,	2,	2),
+       (10,	2,	930,	2,	2);
 
-    -- Verificar se a região da listagem está na tabela region_info
-    IF NOT EXISTS (SELECT 1 FROM region_info WHERE region_id = NEW.region_id) THEN
-        -- Se não existir, lançar um erro
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A região da listagem não está na tabela region_info';
-    END IF;
-
-    -- Verificar se o tipo de propriedade da listagem está na tabela property_type_info
-    IF NOT EXISTS (SELECT 1 FROM property_type_info WHERE type_id = (SELECT type_id FROM property_info WHERE id = NEW.id)) THEN
-        -- Se não existir, lançar um erro
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'O tipo de propriedade da listagem não está na tabela property_type_info';
-    END IF;
-
-    -- Verificar se a combinação de amenidades da listagem está na tabela amenity_combinations
-    IF NOT EXISTS (SELECT 1 FROM amenity_combinations WHERE combination_id = (SELECT combination_id FROM amenities_info WHERE id = NEW.id)) THEN
-        -- Se não existir, lançar um erro
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A combinação de amenidades da listagem não está na tabela amenity_combinations';
-    END IF;
-
-    -- Verificar se a opção de lavanderia da listagem está na tabela laundry_options_info
-    IF NOT EXISTS (SELECT 1 FROM laundry_options_info WHERE laundry_option_id = (SELECT laundry_option_id FROM amenities_info WHERE id = NEW.id)) THEN
-        -- Se não existir, lançar um erro
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A opção de lavanderia da listagem não está na tabela laundry_options_info';
-    END IF;
-
-    -- Verificar se a opção de estacionamento da listagem está na tabela parking_options_info
-    IF NOT EXISTS (SELECT 1 FROM parking_options_info WHERE parking_option_id = (SELECT parking_option_id FROM amenities_info WHERE id = NEW.id)) THEN
-        -- Se não existir, lançar um erro
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A opção de estacionamento da listagem não está na tabela parking_options_info';
-    END IF;
-END;
-
-COMMIT;
+INSERT INTO amenities_info (id, combination_id, laundry_option_id, parking_option_id)
+VALUES (1,	50,	1,	2),
+       (2,	40,	2,	1),
+       (3,	30,	1,	2),
+       (4,	10,	2,	1),
+       (5,	20,	1,	2),
+       (6,	60,	2,	2),
+       (7,	1,	1,	1),
+       (8,	5,	2,	1),
+       (9,	25,	1,	2),
+       (10,	30,	2,	2);
