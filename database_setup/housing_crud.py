@@ -86,13 +86,14 @@ class HousingCRUD:
     
     def remove_property(self, property_id):
         try:
-            # Remover dados da tabela property_info
-            self.cursor.execute("DELETE FROM listing_info WHERE id = %s", (property_id,))
-            self.cursor.execute("UPDATE listing_info SET id = id - 1 WHERE id > %s;", (property_id,))
+            with self.conn.cursor() as cursor:
+                # Delete the property
+                cursor.execute("DELETE FROM listing_info WHERE id = %s", (property_id,))
+                cursor.execute("UPDATE listing_info SET id = id - 1 WHERE id > %s;", (property_id,))
             self.conn.commit()
-        except Exception as e:
+        except mysql.connector.Error as e:
             self.conn.rollback()
-            raise Exception(f"Erro ao remover propriedade: {str(e)}")              
+            raise Exception(f"Error removing property: {str(e)}")   
             
         print("Propriedade removida com sucesso.")
         

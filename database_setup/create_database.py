@@ -41,6 +41,16 @@ def create_schema(connection):
                     cursor.execute(statement)
             cursor.execute(
     """
+    CREATE TRIGGER before_insert_listing_info
+    BEFORE INSERT ON listing_info
+    FOR EACH ROW
+    BEGIN
+        SET NEW.id = (SELECT MAX(id) FROM listing_info) + 1;
+    END;
+    """
+            )
+            cursor.execute(
+    """
     CREATE TRIGGER insert_listing_info_trigger
     AFTER INSERT ON listing_info
     FOR EACH ROW
@@ -56,6 +66,7 @@ def create_schema(connection):
             -- Se não existir, lançar um erro
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A região da listagem não está na tabela region_info';
         END IF;
+        
     END;
     """
             )
