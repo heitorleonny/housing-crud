@@ -74,4 +74,4 @@ class MongoDBManager:
 #MongoDBManager.delete_document({"key": "new_value"})
          
 # Mostrando documentos
-#MongoDBManager.display_documents()
+MongoDBManager.display_documents()
