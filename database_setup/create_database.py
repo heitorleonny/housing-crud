@@ -56,31 +56,47 @@ def create_schema(connection):
             -- Se não existir, lançar um erro
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A região da listagem não está na tabela region_info';
         END IF;
-
-        -- Verificar se o tipo de propriedade da listagem está na tabela property_type_info
-        IF NOT EXISTS (SELECT 1 FROM property_type_info WHERE type_id = (SELECT type_id FROM property_info WHERE id = NEW.id)) THEN
+    END;
+    """
+            )
+            cursor.execute(
+    """
+    CREATE TRIGGER insert_property_info_trigger
+    AFTER INSERT ON property_info
+    FOR EACH ROW
+    BEGIN
+        -- Verificar se o tipo de propriedade está na tabela property_type_info
+        IF NOT EXISTS (SELECT 1 FROM property_type_info WHERE type_id = NEW.type_id) THEN
             -- Se não existir, lançar um erro
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'O tipo de propriedade da listagem não está na tabela property_type_info';
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'O tipo de propriedade não está na tabela property_type_info';
+        END IF;
+    END;
+    """
+            )     
+            cursor.execute(
+    """
+    CREATE TRIGGER insert_amenities_info_trigger
+    AFTER INSERT ON amenities_info
+    FOR EACH ROW
+    BEGIN
+        -- Verificar se a combinação de amenidades está na tabela amenity_combinations
+        IF NOT EXISTS (SELECT 1 FROM amenity_combinations WHERE combination_id = NEW.combination_id) THEN
+            -- Se não existir, lançar um erro
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A combinação de amenidades não está na tabela amenity_combinations';
         END IF;
 
-        -- Verificar se a combinação de amenidades da listagem está na tabela amenity_combinations
-        IF NOT EXISTS (SELECT 1 FROM amenity_combinations WHERE combination_id = (SELECT combination_id FROM amenities_info WHERE id = NEW.id)) THEN
+        -- Verificar se a opção de lavanderia está na tabela laundry_options_info
+        IF NOT EXISTS (SELECT 1 FROM laundry_options_info WHERE laundry_option_id = NEW.laundry_option_id) THEN
             -- Se não existir, lançar um erro
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A combinação de amenidades da listagem não está na tabela amenity_combinations';
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A opção de lavanderia não está na tabela laundry_options_info';
         END IF;
 
-        -- Verificar se a opção de lavanderia da listagem está na tabela laundry_options_info
-        IF NOT EXISTS (SELECT 1 FROM laundry_options_info WHERE laundry_option_id = (SELECT laundry_option_id FROM amenities_info WHERE id = NEW.id)) THEN
+        -- Verificar se a opção de estacionamento está na tabela parking_options_info
+        IF NOT EXISTS (SELECT 1 FROM parking_options_info WHERE parking_option_id = NEW.parking_option_id) THEN
             -- Se não existir, lançar um erro
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A opção de lavanderia da listagem não está na tabela laundry_options_info';
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A opção de estacionamento não está na tabela parking_options_info';
         END IF;
-
-        -- Verificar se a opção de estacionamento da listagem está na tabela parking_options_info
-        IF NOT EXISTS (SELECT 1 FROM parking_options_info WHERE parking_option_id = (SELECT parking_option_id FROM amenities_info WHERE id = NEW.id)) THEN
-            -- Se não existir, lançar um erro
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A opção de estacionamento da listagem não está na tabela parking_options_info';
-        END IF;
-    END
+    END;
     """
             )
             connection.commit()

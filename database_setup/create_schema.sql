@@ -11,25 +11,25 @@ use housing;
 
 -- Tabela para tipos de propriedade
 CREATE TABLE property_type_info (
-    type_id INT PRIMARY KEY,
+    type_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
     type_description VARCHAR(255)
 );
 
 -- Tabela para opções de lavanderia
 CREATE TABLE laundry_options_info (
-    laundry_option_id INT PRIMARY KEY,
+    laundry_option_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     laundry_option_description VARCHAR(255)
 );
 
 -- Tabela para opções de estacionamento
 CREATE TABLE parking_options_info (
-    parking_option_id INT PRIMARY KEY,
+    parking_option_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     parking_option_description VARCHAR(255)
 );
 
 -- Tabela para combinações de amenidades
 CREATE TABLE amenity_combinations (
-    combination_id INT PRIMARY KEY,
+    combination_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     cats_allowed BOOLEAN,
     dogs_allowed BOOLEAN,
     smoking_allowed BOOLEAN,
@@ -40,20 +40,20 @@ CREATE TABLE amenity_combinations (
 
 -- Tabela para informações de região
 CREATE TABLE region_info (
-    region_id INT PRIMARY KEY,
+    region_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     region_name VARCHAR(255)
 );
 
 -- Tabela para informações de estado
 CREATE TABLE state_info (
-    state_id INT PRIMARY KEY,
+    state_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     state_name VARCHAR(255),
     state_abbreviation CHAR(2)
 );
 
 -- Tabela para informações de listagem
 CREATE TABLE listing_info (
-    id INT PRIMARY KEY,
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     region_id INT,
     state_id INT,
     price DECIMAL,
@@ -66,7 +66,7 @@ CREATE TABLE listing_info (
 
 -- Tabela para informações da propriedade
 CREATE TABLE property_info (
-    id INT PRIMARY KEY,
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     type_id INT,
     sqfeet INT,
     beds INT,
@@ -77,7 +77,7 @@ CREATE TABLE property_info (
 
 -- Tabela para informações de amenidades
 CREATE TABLE amenities_info (
-    id INT PRIMARY KEY,
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     combination_id INT,
     laundry_option_id INT,
     parking_option_id INT,
