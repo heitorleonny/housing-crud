@@ -63,7 +63,7 @@ class RegionInfoCRUD:
             print(f"Erro ao excluir região: {err}")
             return False
 
-    def close_connection(self):
+    def __end__(self):
         self.cursor.close()
         self.conn.close()
         
