@@ -62,6 +62,7 @@ class MongoDBManager:
 
     @staticmethod
     def update_data(filter_query: Dict[str, Any], update_query: Dict[str, Any]) -> int:
+        print('oi')
         """
         Update documents in the collection based on a filter.
         """
