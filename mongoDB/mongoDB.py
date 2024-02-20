@@ -105,36 +105,57 @@ class MongoDBManager:
 
         print(document)
         return document
-    
+
     @staticmethod
-    def get_documents_with_conditions(conditions):
-        try:
-            filter_query = {}
+    def search_documents_with_filter(atribute, op, val):
+        # Separar se é numero ou texto
+        numbers = ["price", "latitude", "longitude", "sqfeet", "beds", "baths"]
+        bools = ["laundry_option", "parking_option", "cats_allowed", "dogs_allowed", "smoking_allowed", "wheelchair_access", "electric_vehicle_charge", "comes_furnished"]
 
-            for condition in conditions:
-                # Split condition into field, operator, and value
-                split_condition = re.split(r'\s+|(?<!\d)([=<>]+)(?!=)', condition)
-                field, operator, value = split_condition[0], split_condition[1], split_condition[2]
+        if atribute in numbers:
+            val= float(val)
+        if atribute in bools:
+            print(f"ta em bool, atributo {atribute}")
+            if val.casefold() == 'true':
+                val = True
+            else:
+                val = False
 
-                # Convert value to the appropriate type (int, float, or string)
-                if field not in ['region_name', 'description']:
-                    value = int(value) if value.isdigit() else float(value)
+        # Converter operação para código
+        if op == '=':
+            op = '$eq'
+        elif op == '!=':
+            op = "$ne"
+        elif op == '>=':
+            op = "$gte"
+        elif op == '<=':
+            op = "$lte"
+        elif op == 'LIKE':
+            op = "$regex"
+        
 
-                # Handle LIKE operator for string fields
-                if operator.upper() == 'LIKE':
-                    filter_query[field] = {'$regex': value, '$options': 'i'}
-                else:
-                    filter_query[field] = {f'${operator}': value}
+        if atribute in bools:
+            query = {atribute: val}
+        else:
+            query = {atribute: {op: val}}
 
-            documents = MongoDBManager._get_collection().find(filter_query)
-            result = list(documents)
+        documents_list = []
+        #query = {"laundry_option": True}
 
-            MongoDBManager.logger.info(f'Retrieved documents based on conditions. Total documents: {len(result)}')
-            return result
 
-        except Exception as e:
-            MongoDBManager.logger.error(f'Error retrieving data with conditions: {str(e)}')
-            raise
+        documents_cursor = MongoDBManager._collection.find(query)
+        print(f"Pesquisa realizada com os filtros: {query}")
+        for document in documents_cursor:
+            documents_list.append(document)
+            print(f"{document}\n")
+        
+        return documents_list
+
+query_price_gt_1300 = {"price": {"$gt": 1300}}
+banco = MongoDBManager()
+lista = banco.search_documents_with_filter('cats_allowed', '=', 'false')
+for document in lista:
+    print()
 
 
 

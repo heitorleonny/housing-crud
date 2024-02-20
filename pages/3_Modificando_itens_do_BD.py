@@ -68,80 +68,72 @@ def create_property_menu(property_id):
     
     # Restante do seu código permanece inalterado
     atributes_apt= [
-        'id',  
-        'price', 
-        'description', 
-        'latitude', 
-        'longitude', 
-        'region_id', 
-        'region_name', 
-        'state_id', 
-        'state_name', 
-        'state_abbreviation', 
-        'sqfeet', 
-        'beds', 
-        'baths', 
-        'type_id', 
-        'type_description', 
-        'laundry_option_id', 
-        'laundry_option_description', 
-        'parking_option_id', 
-        'parking_option_description', 
-        'combination_id', 
-        'cats_allowed', 
-        'dogs_allowed', 
-        'smoking_allowed', 
-        'wheelchair_access', 
-        'electric_vehicle_charge', 
-        'comes_furnished'
+    "_id",
+    "region_name",
+    "state_name",
+    "price",
+    "description",
+    "latitude",
+    "longitude",
+    "property_type",
+    "sqfeet",
+    "beds",
+    "baths",
+    "laundry_option",
+    "parking_option",
+    "cats_allowed",
+    "dogs_allowed",
+    "smoking_allowed",
+    "wheelchair_access",
+    "electric_vehicle_charge",
+    "comes_furnished"
     ]
 
     apt = MongoDBManager.get_document_by_id(MongoDBManager._get_collection(), property_id)
 
         # Ajuste para obter o campo 'id' apropriado
-    st.write(apt)
+    #st.write(apt)
 
     
     print(f'\033[41m{apt}\033[0m')
     new_apt = {}
     
     
-    
+    print(f"apt: {apt}")
     col1, col2, col3 = st.columns([1,1,1])
     ## __Todo__!: ajeitar as variáveis padrão e o menu para o formato usado no mongoDB (Como na pag de adição)
     with col1:
-        
-        new_apt['desc'] = st.text_input(f"Qual a descrição do imóvel?")
-        new_apt['type'] =  st.selectbox("Qual o tipo de imóvel?", housing_types, index=0 )
-        new_apt['region'] = st.text_input(f"Qual a região?")
-        new_apt['beds'] = st.number_input(f"Quantos quartos?", value=2, step=1, format="%d")
-        new_apt['lat'] = st.number_input(f"Qual a latitude do imóvel?", value=39.5483)
+        new_apt['description'] = st.text_input(f"Qual a descrição do imóvel?", placeholder=apt['description'])
+        new_apt['property_type'] = st.selectbox("Qual o tipo de imóvel?", housing_types, index=housing_types.index(apt['property_type']) if apt['property_type'] in housing_types else None)
+        new_apt['region_name'] = st.text_input(f"Qual a região?", placeholder=apt['region_name'])
+        new_apt['beds'] = st.number_input(f"Quantos quartos?", value=apt['beds'], step=1, format="%d", placeholder=apt['beds'])
+        new_apt['latitude'] = st.number_input(f"Qual a latitude do imóvel?", value=apt['latitude'], placeholder=apt['latitude'])
 
     with col2:
-        new_apt['l_pot'] =  st.selectbox("Qual o tipo de lavanderia?", laundry_opts, index=0 )
-        new_apt['state'] =  st.selectbox("Qual o estado?", states, index=0 )
-        
-        new_apt['baths'] = st.number_input(f"Quantos banheiros?", value=3, step=1, format="%d")
-        new_apt['long'] = st.number_input(f"Qual a longitude do imóvel?", value=-119.746)
+        new_apt['laundry_option'] = st.selectbox("Qual o tipo de lavanderia?", laundry_opts, index=laundry_opts.index(apt['laundry_option']) if apt['laundry_option'] in laundry_opts else None)
+        new_apt['state_name'] = st.selectbox("Qual o estado?", states, index=states.index(apt['state_name']) if apt['state_name'] in states else None)
+        new_apt['baths'] = st.number_input(f"Quantos banheiros?", value=apt['baths'], step=1, format="%d", placeholder=apt['baths'])
+        new_apt['longitude'] = st.number_input(f"Qual a longitude do imóvel?", value=apt['longitude'], placeholder=apt['longitude'])
 
     with col3:
-        new_apt['p_opt'] =  st.selectbox("Qual o tipo de estacionamento?", parking_opts, index=0 )
-        new_apt['price'] = st.number_input(f"Qual o preço do imóvel?", value= 1256.74)
-        new_apt['sqfeet'] = st.number_input(f"Qual o tamanho do imóvel? (SqFeet)", value= 750)
+        new_apt['parking_option'] = st.selectbox("Qual o tipo de estacionamento?", parking_opts, index=parking_opts.index(apt['parking_option']) if apt['parking_option'] in parking_opts else None)
+        new_apt['price'] = st.number_input(f"Qual o preço do imóvel?", value=apt['price'], placeholder=apt['price'])
+        new_apt['sqfeet'] = st.number_input(f"Qual o tamanho do imóvel? (SqFeet)", value=apt['sqfeet'], placeholder=apt['sqfeet'])
 
-    col4, col5, col6 = st.columns([1,1,1])
+    col4, col5, col6 = st.columns([1, 1, 1])
 
     with col4:
-        new_apt['cats_allowed'] = st.toggle('Permite gatos?')
-        new_apt['wheelchair_access'] = st.toggle('Acessível a cadeira de rodas?')
+        new_apt['cats_allowed'] = st.checkbox('Permite gatos?', value=apt['cats_allowed'])
+        new_apt['wheelchair_access'] = st.checkbox('Acessível a cadeira de rodas?', value=apt['wheelchair_access'])
 
     with col5:
-        new_apt['dogs_allowed'] = st.toggle('Permite cachorros?')
-        new_apt['electric_vehicle_charge'] = st.toggle('Possui carregador para carros elétricos?')
+        new_apt['dogs_allowed'] = st.checkbox('Permite cachorros?', value=apt['dogs_allowed'])
+        new_apt['electric_vehicle_charge'] = st.checkbox('Possui carregador para carros elétricos?', value=apt['electric_vehicle_charge'])
 
     with col6:
-        new_apt['smoking_allowed'] = st.toggle('Permite fumar?')
-        new_apt['comes_furnished'] = st.toggle('Vem mobiliado?') 
+        new_apt['smoking_allowed'] = st.checkbox('Permite fumar?', value=apt['smoking_allowed'])
+        new_apt['comes_furnished'] = st.checkbox('Vem mobiliado?', value=apt['comes_furnished'])
+
 
     colum_1, colum_2, colum_3 = st.columns([1,1,1])
     with colum_1:
@@ -175,7 +167,7 @@ if (n_elements > 0):
     cl1, cl2 = st.columns([1,3])
     
     id = st.text_input(f"Insira o ID do imóvel")
-    
+
     while id != '':
         create_property_menu(ObjectId(id))
         id = input("Insira o ID (ou pressione Enter para sair): ")
