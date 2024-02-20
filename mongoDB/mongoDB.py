@@ -6,6 +6,7 @@ import logging
 from pymongo import MongoClient
 from bson import ObjectId
 from typing import Any, Dict, List, Optional
+import re
 
 class MongoDBManager:
 
@@ -104,7 +105,42 @@ class MongoDBManager:
 
         print(document)
         return document
-        
+    
+    @staticmethod
+    def get_documents_with_conditions(conditions):
+        try:
+            filter_query = {}
+
+            for condition in conditions:
+                # Split condition into field, operator, and value
+                split_condition = re.split(r'\s+|(?<!\d)([=<>]+)(?!=)', condition)
+                field, operator, value = split_condition[0], split_condition[1], split_condition[2]
+
+                # Convert value to the appropriate type (int, float, or string)
+                if field not in ['region_name', 'description']:
+                    value = int(value) if value.isdigit() else float(value)
+
+                # Handle LIKE operator for string fields
+                if operator.upper() == 'LIKE':
+                    filter_query[field] = {'$regex': value, '$options': 'i'}
+                else:
+                    filter_query[field] = {f'${operator}': value}
+
+            documents = MongoDBManager._get_collection().find(filter_query)
+            result = list(documents)
+
+            MongoDBManager.logger.info(f'Retrieved documents based on conditions. Total documents: {len(result)}')
+            return result
+
+        except Exception as e:
+            MongoDBManager.logger.error(f'Error retrieving data with conditions: {str(e)}')
+            raise
+
+
+
+
+
+"""      
 banco = MongoDBManager()
 #banco.get_document_by_id(banco._collection ,"65d41776e4dde60daf295d56")
 string_id = "65d41668e4dde60daf295d43"
@@ -115,7 +151,7 @@ banco.get_document_by_id(banco._collection, object_id)
 lista = list(banco.display_documents())
 print(len(lista))
 
-"""
+
 # Exemplo de uso:
 banco = MongoDBManager()
 # Inserir dados
