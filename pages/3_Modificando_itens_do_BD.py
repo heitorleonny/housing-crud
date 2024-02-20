@@ -1,171 +1,205 @@
 import streamlit as st
+from bson import ObjectId
+## __Todo__!: ajeitar informações
+from mongoDB.mongoDB import MongoDBManager
 
 
-def create_search_menu(table):
-    st.write(f"<h3>Item escolhido: {table}<h3>", unsafe_allow_html=True)
-    cl1, cl2 = st.columns([1,3])
+## __Todo__!: remover essas classes e converter em uma só
+mongo_database = MongoDBManager()
 
-    if table == "Imóveis":
-        with cl1:
-            id = st.number_input(f"Insira o ID do imóvel", value=000)
-        create_property_menu(id)
-    elif table == "Estados":
-        with cl1:
-            id = st.text_input(f"Insira o ID do estado", value=000)
-        create_state_menu(id)
-    elif table == "Regiões":
-        with cl1:
-            id = st.number_input(f"Insira o ID da região", value=000)
-        create_region_menu(id)
+## __Todo__!: Transformar em listas, assim como na pag 2
+housing_types = [ 'apartment', 'condo', 'house', 'duplex', 'townhouse', 'loft', 'manufacturated', 'cottage/cabin', 'flat', 'in-law', 'land', 'assisted living' ]
+laundry_opts = ['w/d in unit', 'w/d hookups', 'laundry on site','laundry in bldg', 'no laundry on site']
+parking_opts = ['carport','attached garage','off-street parking','detached garage','street parking', 'no parking', 'valet parking']
+states = [
+'alaska', 
+'arizona', 
+'arkansas', 
+'california',
+'colorado',
+'connecticut', 
+'district of columbia',
+'delaware', 
+ 'florida', 
+ 'georgia', 
+ 'hawaii', 
+ 'idaho', 
+ 'illinois', 
+ 'indiana', 
+ 'iowa', 
+ 'kansas', 
+ 'kentucky', 
+ 'louisiana', 
+ 'maine', 
+ 'maryland',
+ 'massachusetts', 
+ 'michigan', 
+ 'minnesota', 
+ 'mississippi', 
+ 'missouri', 
+ 'montana', 
+ 'nebraska', 
+ 'nevada', 
+ 'new hampshire', 
+ 'new jersey', 
+ 'new mexico', 
+ 'new york', 
+ 'north carolina', 
+ 'north dakota', 
+ 'ohio', 
+ 'oklahoma', 
+ 'oregon', 
+ 'pennsylvania', 
+ 'rhode island', 
+ 'south carolina', 
+ 'south dakota', 
+ 'tennessee', 
+ 'texas', 
+ 'utah', 
+ 'vermont', 
+ 'virginia', 
+ 'washington', 
+ 'west virginia', 
+ 'wisconsin', 
+ 'wyoming', 
+]
 
-        
+def create_property_menu(property_id):
+    
+    # Restante do seu código permanece inalterado
+    atributes_apt= [
+        'id',  
+        'price', 
+        'description', 
+        'latitude', 
+        'longitude', 
+        'region_id', 
+        'region_name', 
+        'state_id', 
+        'state_name', 
+        'state_abbreviation', 
+        'sqfeet', 
+        'beds', 
+        'baths', 
+        'type_id', 
+        'type_description', 
+        'laundry_option_id', 
+        'laundry_option_description', 
+        'parking_option_id', 
+        'parking_option_description', 
+        'combination_id', 
+        'cats_allowed', 
+        'dogs_allowed', 
+        'smoking_allowed', 
+        'wheelchair_access', 
+        'electric_vehicle_charge', 
+        'comes_furnished'
+    ]
 
-def create_region_menu(id):
-    #Implementar com código real depois:
-    name = "popopipiska" #placeholder
-    regstate_infos = [ id , name]
+    apt = MongoDBManager.get_document_by_id(MongoDBManager._get_collection(), property_id)
 
-    col1, col2, col3 = st.columns([1,1,2])
-    with col1:
-        ID_show = st.text_input(f"ID", value=id, disabled=True)
-        if st.button("Editar"):
-            print("Saving modifications...")
-            #Falta o código
-            with col3:
-                st.write("Modificações salvas!")
-    with col2:
-        new_name = st.text_input(f"Nome", value=name)
-        if st.button("Deletar elemento"):
-            print("Deletando elemento...")
-            #Falta código
-            with col3:
-                st.write("item removido!")
-
-def create_property_menu(id):
-    #Formato usado:
-    # 0: Nome da região
-    # 1: Tipo de imóvel
-    # 2: Tamanho do imóvel (SqFeet)
-    # 3: Quantidade de quartos
-    # 4: Quantidade de banheiros
-    # 5: Permite gatos? (1 para sim, 0 para não)
-    # 6: Permite cachorros? (1 para sim, 0 para não)
-    # 7: Permite fumar? (1 para sim, 0 para não)
-    # 8: Acessível a cadeira de rodas? (1 para sim, 0 para não)
-    # 9: Possui carregador para carros elétricos? (1 para sim, 0 para não)
-    # 10: Vem mobiliado? (1 para sim, 0 para não)
-    # 11: Latitude do imóvel
-    # 12: Longitude do imóvel
-    # 13: Preço do imóvel
-    # 14: Nome do estado
-
-
-    new_apt = [None for _ in range(15)]
-    current_props = ['stockton', "Cabine", 115, 2, 3, 1, 1, 1, 1, 1, 1, 39.5483, -119.746, 935.0, "Texas"]
-
-    housing_types = ["Apartamento", "Residência assistida", "Condomínio", "Cabine", "Duplex", "Flat", "Casa", "Anexo", "Terreno", "Loft","Manufaturado", "Casa de cidade" ]
-    #Ajeitar depois
-    regions = ["reno / tahoe", "stockton" , "gainesville", "sarasota-bradenton", "macon / warner robin", "quad cities", "topeka", "rochester", "south jersey", "knoxville", "wichita"]
-    states = ['ny', 'etc']
+        # Ajuste para obter o campo 'id' apropriado
+    st.write(apt)
+    property_id_value = apt.get('_id', None)
+    if property_id_value is not None:
+        id_show = st.text_input(f"ID", value=str(property_id_value), disabled=True)
+    else:
+        st.warning("Campo 'id' não encontrado no documento.")
+    print(f'\033[41m{apt}\033[0m')
+    new_apt = {}
+    
+    #id_show = st.text_input(f"ID", value=str(apt['_id']), disabled=True)
+    #new_apt['desc'] = st.text_area(f"Qual a descrição do imóvel?", value=apt['description'])
     
     col1, col2, col3 = st.columns([1,1,1])
-    #Para perguntas de "Sim ou Não" serão usados os valores 0 e 1, referindo-se a não e sim respectivamente
+    ## __Todo__!: ajeitar as variáveis padrão e o menu para o formato usado no mongoDB (Como na pag de adição)
     with col1:
-        id_show = st.text_input(f"ID", value=id, disabled=True)
-        new_apt[3] = st.number_input(f"Quantos quartos?", value=current_props[3], step=1, format="%d")
-        new_apt[11] = st.number_input(f"Qual a latitude do imóvel?", value=current_props[11])
-        new_apt[14] = st.number_input(f"Qual o nome do estado?", value= 405)
+        new_apt['type'] =  st.selectbox("Qual o tipo de imóvel?", housing_types, index=(apt['type_id'] - 1) )
+        new_apt['region'] = st.text_input(f"Qual a região?")
+        new_apt['beds'] = st.number_input(f"Quantos quartos?", value=apt['beds'], step=1, format="%d")
+        new_apt['lat'] = st.number_input(f"Qual a latitude do imóvel?", value=float(apt['latitude']) )
 
     with col2:
-        new_apt[1] =  st.selectbox("Qual o tipo de imóvel?", housing_types, index= housing_types.index(current_props[1]))
-        new_apt[4] = st.number_input(f"Quantos banheiros?", value=current_props[4], step=1, format="%d")
-        new_apt[12] = st.number_input(f"Qual a longitude do imóvel?", value=current_props[12])
+        print(apt['laundry_option_id'], laundry_opts)
+        new_apt['l_opt'] =  st.selectbox("Qual o tipo de lavanderia?", laundry_opts, index=(apt['laundry_option_id'] - 1) )
+        new_apt['state'] =  st.selectbox("Qual o estado?", states, index=(apt['state_id'] - 1) )
+        
+        new_apt['baths'] = st.number_input(f"Quantos banheiros?", value=apt['baths'], step=1, format="%d")
+        new_apt['long'] = st.number_input(f"Qual a longitude do imóvel?", value=float(apt['longitude']))
 
     with col3:
-        new_apt[2] = st.number_input(f"Qual o tamanho do imóvel? (SqFeet)", value= current_props[2])
-        new_apt[0] = st.number_input(f"Qual o nome da região?", value= 404)
-        new_apt[13] = st.number_input(f"Qual o preço do imóvel?", value=current_props[13])
+        new_apt['p_opt'] =  st.selectbox("Qual o tipo de estacionamento?", parking_opts, index=(apt['parking_option_id'] - 1) )
+        new_apt['price'] = st.number_input(f"Qual o preço do imóvel?", value=float(apt['price']))
+        new_apt['sqfeet'] = st.number_input(f"Qual o tamanho do imóvel? (SqFeet)", value= float(apt['sqfeet']))
 
     col4, col5, col6 = st.columns([1,1,1])
 
     with col4:
-        if st.toggle('Permite gatos?', value=true_or_false(current_props[5])):
-            new_apt[5] = 1
-        else:
-            new_apt[5] = 0
-
-        if st.toggle('Acessível a cadeira de rodas?',value=true_or_false(current_props[8])):
-            new_apt[8] = 1
-        else:
-            new_apt[8] = 0
+        new_apt['cats_allowed'] = st.toggle('Permite gatos?', value=apt['cats_allowed'])
+        new_apt['wheelchair_access'] = st.toggle('Acessível a cadeira de rodas?', value=apt['wheelchair_access'])
 
     with col5:
-        if st.toggle('Permite cachorros?', value=true_or_false(current_props[5])):
-            new_apt[6] = 1
-        else:
-            new_apt[6] = 0
-
-        if st.toggle('Possui carregador para carros elétricos?', value=true_or_false(current_props[9])):
-            new_apt[9] = 1
-        else:
-            new_apt[9] = 0
+        new_apt['dogs_allowed'] = st.toggle('Permite cachorros?', value=apt['dogs_allowed'])
+        new_apt['electric_vehicle_charge'] = st.toggle('Possui carregador para carros elétricos?', value=apt['electric_vehicle_charge'])
 
     with col6:
-        if st.toggle('Permite fumar?', value=true_or_false(current_props[7])):
-            new_apt[7] = 1
-        else:
-            new_apt[7] = 0
-
-        if st.toggle('Vem mobiliado?', value=true_or_false(current_props[10])):
-            new_apt[10] = 1
-        else:
-            new_apt[10] = 0
+        new_apt['smoking_allowed'] = st.toggle('Permite fumar?', value=apt['smoking_allowed'])
+        new_apt['comes_furnished'] = st.toggle('Vem mobiliado?', value=apt['comes_furnished']) 
 
     colum_1, colum_2, colum_3 = st.columns([1,1,7])
     with colum_1:
         if st.button("Editar"):
             print("Saving modifications...")
-            #Falta o código
+            
+            mongo_database.update_data(
+                filter_query={'id': property_id},
+                update_query={
+                    '$set': {
+                        'region_name': new_apt['region'],
+                        'state_name': new_apt['state'],
+                        'price': new_apt['price'],
+                        'description': new_apt['desc'],
+                        'latitude': new_apt['lat'],
+                        'longitude': new_apt['long'],
+                        'property_type': new_apt['type'],
+                        'sqfeet': new_apt['sqfeet'],
+                        'beds': new_apt['beds'],
+                        'baths': new_apt['baths'],
+                        'laundry_option': new_apt['l_opt'],
+                        'parking_option': new_apt['p_opt'],
+                        'cats_allowed': new_apt['cats_allowed'],
+                        'dogs_allowed': new_apt['dogs_allowed'],
+                        'smoking_allowed': new_apt['smoking_allowed'],
+                        'wheelchair_access': new_apt['wheelchair_access'],
+                        'electric_vehicle_charge': new_apt['electric_vehicle_charge'],
+                        'comes_furnished': new_apt['comes_furnished']
+                    }
+                }
+            )
             with colum_3:
                 st.write("Modificações salvas!")
+
     with colum_2:
         if st.button("Deletar elemento"):
             print("Deletando elemento...")
-            #Falta código
+            # Restante do seu código permanece inalterado
+            mongo_database.delete_data({'id': property_id})
             with colum_3:
                 st.write("item removido!")
 
-def create_state_menu(id):
-    #Implementar com código real depois:
-    name = "popopipiska" #placeholder
-    abrev = "po"
-    regstate_infos = [ id , name, abrev]
-
-    col1, col2, col3, col4 = st.columns([1,1,0.5,2])
-    with col1:
-        ID_show = st.text_input(f"ID", value=id, disabled=True)
-        if st.button("Editar"):
-            print("Saving modifications...")
-            #Falta o código
-            with col3:
-                st.write("Modificações salvas!")
-    with col2:
-        new_name = st.text_input(f"Nome", value=name)
-        if st.button("Deletar elemento"):
-            print("Deletando elemento...")
-            #Falta código
-            with col3:
-                st.write("item removido!")
-    with col3:
-        new_abrev = st.text_input(f"Sigla", value=abrev, max_chars=2)
-
-def true_or_false(value):
-    if value == 0:
-        return False
-    elif value == 1:
-        return True
-    return None
 st.write("<h2>Modificando itens do BD<h2>", unsafe_allow_html=True)
 st.markdown(f'''Aqui você pode modificar ou deletar itens presentes em seu banco de dados''')
-selected_table = st.selectbox("Qual tipo de item você quer modificar?", ("Imóveis", "Estados", "Regiões" ))
-create_search_menu(selected_table)
+
+ ## __Todo__!: Fornecer uma lista com todas as propriedades
+n_elements = len(list(MongoDBManager.display_documents()))
+st.write(n_elements)
+
+if (n_elements > 0):
+    cl1, cl2 = st.columns([1,3])
+    with cl1:
+        id = st.text_input(f"Insira o ID do imóvel")
+        if st.button()
+        create_property_menu(ObjectId("65d41747e4dde60daf295d50"))
+
+else:
+    st.write(f"<h3>Não há nada para editar.<h3>")

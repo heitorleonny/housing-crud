@@ -4,6 +4,7 @@
 
 import logging
 from pymongo import MongoClient
+from bson import ObjectId
 from typing import Any, Dict, List, Optional
 
 class MongoDBManager:
@@ -14,7 +15,7 @@ class MongoDBManager:
 
     _client: MongoClient = MongoClient("mongodb://root:example@localhost:27017/rent-right?authSource=admin")
     _db = _client.rent_right
-    _collection = None
+    _collection = _db.rentRight
 
     @staticmethod
     def _get_database():
@@ -41,18 +42,23 @@ class MongoDBManager:
             raise
 
     @staticmethod
-    def read_data() -> List[Dict[str, Any]]:
+    def read_data(property_id: Optional[int] = None) -> List[Dict[str, Any]]:
         """
-        Read all documents in the collection.
+        Read documents in the collection based on a filter (property_id).
         """
         try:
-            data = MongoDBManager._get_collection().find()
-            result = list(data)
+            filter_query = {} if property_id is None else {'_id': property_id}
+            data = MongoDBManager._get_collection().find(filter_query)
+            
+            # Convertendo o objeto ObjectId do MongoDB para uma string para facilitar o uso
+            result = [{'id': str(document['_id']), **document} for document in data]
+            
             MongoDBManager.logger.info(f'Reading successful. Total documents: {len(result)}')
             return result
         except Exception as e:
             MongoDBManager.logger.error(f'Error reading data: {str(e)}')
             raise
+
 
     @staticmethod
     def update_data(filter_query: Dict[str, Any], update_query: Dict[str, Any]) -> int:
@@ -82,10 +88,31 @@ class MongoDBManager:
 
     @staticmethod
     def display_documents():
-        collection = MongoDBManager._get_collection()
+        collection = MongoDBManager._collection
         documents = collection.find()
-        for document in documents:
-            print(document)
+        
+        return documents
+    
+    @staticmethod
+    def get_document_by_id(collection, document_id):
+        # Converta a string do ID para o formato ObjectId
+        object_id = document_id
+
+        # Use find_one para obter o documento pelo ID
+        document = collection.find_one({"_id": object_id})
+
+        print(document)
+        return document
+        
+banco = MongoDBManager()
+#banco.get_document_by_id(banco._collection ,"65d41776e4dde60daf295d56")
+string_id = "65d41668e4dde60daf295d43"
+
+# Converta a string para ObjectId
+object_id = ObjectId(string_id)
+banco.get_document_by_id(banco._collection, object_id)
+lista = list(banco.display_documents())
+print(len(lista))
 
 """
 # Exemplo de uso:
