@@ -1,4 +1,4 @@
-Nossa equipe é formada por Alexandre Neiva, Heitor Leonny, Pedro Henrique Vinícius Ferraz, Vinícius Santos e Vinícius Gomes.
+Nossa equipe é formada por Alexandre Neiva, Heitor Leonny, Pedro Henrique, Vinícius Ferraz, Vinícius Santos e Vinícius Gomes.
 
 O DataSet escolhido se trata da Precificação de Aluguéis no Mercado Imobiliário e pode ser acessado por meio do link: https://www.kaggle.com/datasets/austinreese/usa-housing-listings
 
