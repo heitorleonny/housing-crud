@@ -13,3 +13,7 @@ pip install -r 'requirements.txt'
 
 5-Instale o pymysql
 pip install pymysql
+
+6-Instale o MySQL em sua máquina
+
+7-Insira a senha do seu usuário em database_setup\config.cfg
